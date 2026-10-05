@@ -1,1 +1,11 @@
+- name: Install MySQL Client CLI
+  apt:
+    name: mysql-client
+    state: present
+    update_cache: yes
+
+- name: Import Application Schema into Azure MySQL Flexible Server
+  shell: |
+    mysql -h {{ db_host }} -u {{ db_user }} -p'{{ db_password }}' {{ db_name }} < /var/www/theepicbook/db/schema.sql
+  ignore_errors: yes
 

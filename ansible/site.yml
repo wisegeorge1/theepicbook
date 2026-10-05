@@ -1,1 +1,8 @@
-
+- name: Configure Web and Database Server
+  hosts: all
+  become: true
+  roles:
+    - common
+    - database
+    - backend
+    - frontend

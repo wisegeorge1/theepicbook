@@ -1,1 +1,33 @@
+- name: Install Node.js LTS setup script
+  get_url:
+    url: https://deb.nodesource.com/setup_18.x
+    dest: /tmp/node_setup.sh
+    mode: '0755'
+
+- name: Execute Node.js setup script
+  command: /tmp/node_setup.sh
+
+- name: Install Node.js and PM2
+  apt:
+    name: nodejs
+    state: present
+
+- name: Install PM2 globally
+  npm:
+    name: pm2
+    global: yes
+
+- name: Deploy application environment configuration
+  template:
+    src: env.j2
+    dest: /var/www/theepicbook/.env
+
+- name: Install Node.js application dependencies
+  npm:
+    path: /var/www/theepicbook
+
+- name: Start application via PM2
+  command: pm2 start server.js --name "epicbook"
+  args:
+    chdir: /var/www/theepicbook
 
