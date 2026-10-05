@@ -1,0 +1,27 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureServiceConnection: 'Azure-DevOps-Service-Connection'
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Fetch VM Public IP and Run Ansible'
+  inputs:
+    azureSubscription: '$(azureServiceConnection)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      # Retrieve outputs dynamically from Azure Terraform execution
+      VM_IP=$(az vm list-ip-addresses --resource-group rg-epicbook-prod --name vm-epicbook-web --query "[0].virtualMachine.network.publicIpAddresses[0].ipAddress" -o tsv)
+      
+      echo "[web]" > ansible/inventory.ini
+      echo "$VM_IP ansible_user=azureuser ansible_ssh_private_key_file=$(agent.tempDirectory)/epicbook-key" >> ansible/inventory.ini
+      
+      # Run Ansible Playbook
+      ansible-playbook -i ansible/inventory.ini ansible/site.yml
