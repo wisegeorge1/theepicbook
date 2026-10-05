@@ -1,3 +1,4 @@
+# Ansible / SSH / Secrets
 node_modules
 .DS_Store
 *.pem
@@ -6,3 +7,4 @@ id_rsa
 *.retry
 ansible/group_vars/vault.yml
 .env
+ansible/inventory.ini
